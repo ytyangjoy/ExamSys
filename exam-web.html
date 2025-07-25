@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>線上測驗系統</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 首頁 -->
+        <div class="card screen home-screen active">
+            <div class="header">
+                <h1>線上測驗系統</h1>
+                <h2>試題：<span id="exam-name">尚未匯入</span></h2>
+            </div>
+            <div class="button-container">
+                <label class="button file-button">
+                    匯入考題
+                    <input type="file" 
+                           id="question-file-input" 
+                           class="file-input" 
+                           accept=".json" 
+                           onclick="this.value = null"
+                           onchange="handleFileImport(event)">
+                </label>
+                <button class="button" onclick="showReviewMode()" id="review-mode-btn">複習題目</button>
+                <button class="button" onclick="showExamMode()" id="start-exam-btn" disabled>進行測驗</button>
+            </div>
+        </div>
+
+        <!-- 複習模式 -->
+        <div class="card screen review-screen">
+            <div class="header">
+                <h2>複習模式</h2>
+                <button class="button secondary toggle-explanation-btn" onclick="toggleExplanations()">顯示解析</button>
+            </div>
+            <div class="question-container" id="review-question-list"></div>
+            <div class="navigation">
+                <button class="button secondary" onclick="navigateToHome()">返回首頁</button>
+            </div>
+        </div>
+
+        <!-- 考試模式 -->
+        <div class="card screen exam-screen">
+            <div class="header">
+                <div class="exam-header">
+                    <div class="timer">時間：<span id="exam-timer">00:00</span></div>
+                    <button class="button cancel-button" onclick="cancelExam()">取消測驗</button>
+                </div>
+                <div class="question-header">
+                    <div class="mark-container">
+                        <span class="mark-text">標記此題</span>
+                        <label class="switch">
+                            <input type="checkbox" id="mark-question-switch" onchange="toggleQuestionMark()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>第 <span id="current-question-number">1</span> / 
+                             <span id="total-questions-number">65</span> 題</span>
+                        <span id="exam-progress-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" id="exam-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="question-main" id="current-question-container"></div>
+                <div class="options-list" id="question-options-container"></div>
+            </div>
+            <div class="navigation">
+                <button class="button secondary" id="previous-question-btn" onclick="navigateToPreviousQuestion()">上一題</button>
+                <button class="button primary" id="next-question-btn" onclick="navigateToNextQuestion()">下一題</button>
+                <button class="button secondary" id="back-to-preview-btn" onclick="navigateToPreview()" style="display: none;">回到檢視畫面</button>
+            </div>
+        </div>
+
+        <!-- 檢視畫面 -->
+        <div class="card screen preview-screen">
+            <div class="header">
+                <h2>檢視作答狀況</h2>
+            </div>
+            <div class="review-section">
+                <h3>已標記題目</h3>
+                <div class="review-grid" id="marked-questions-grid"></div>
+            </div>
+            <div class="review-section">
+                <h3>未作答題目</h3>
+                <div class="review-grid" id="unanswered-questions-grid"></div>
+            </div>
+            <div class="navigation">
+                <button class="button secondary" onclick="navigateToExam()">返回作答</button>
+                <button class="button primary" onclick="submitExam()">確認提交</button>
+            </div>
+        </div>
+
+        <!-- 結果畫面 -->
+        <div class="card screen result-screen">
+            <div class="header">
+                <h2>考試結果</h2>
+            </div>
+            <div class="score">
+                得分：<span id="final-score">0</span> 分
+            </div>
+            <div class="wrong-answers">
+                <div class="wrong-answers-header">
+                    <h3>錯題回顧</h3>
+                    <button class="button secondary toggle-explanation-btn" onclick="toggleExplanations()">顯示解析</button>
+                </div>
+                <div class="question-container" id="wrong-questions-list"></div>
+            </div>
+            <div class="button-container">
+                <button class="button secondary" onclick="navigateToHome()">返回首頁</button>
+                <button class="button primary" onclick="restartExam()">重新考試</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 題數選擇彈窗 -->
+    <div id="question-count-popup" class="popup-overlay">
+        <div class="popup-content">
+            <h3>請選擇測驗題數</h3>
+            <div class="popup-input-group">
+                <input type="number" 
+                       id="question-count-input" 
+                       min="10" 
+                       max="65" 
+                       value="10">
+                <div class="popup-hint">題數範圍：<span id="question-count-min">10</span>-<span id="question-count-max">65</span> 題</div>
+            </div>
+            <div class="popup-actions">
+                <button class="button secondary" onclick="cancelQuestionCountSelection()">取消</button>
+                <button class="button primary" onclick="confirmQuestionCount()">開始測驗</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
